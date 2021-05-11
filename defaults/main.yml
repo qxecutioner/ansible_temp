@@ -1,0 +1,6 @@
+---
+# defaults file for user
+
+    packages:
+      - proftpd
+      - mc

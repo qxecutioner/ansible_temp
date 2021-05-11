@@ -1,0 +1,20 @@
+---
+# vars file for user
+    username:
+      jithin:
+        uname: jithin
+        description: jithin's account
+      athira:
+        uname: athira
+        description: athira's account
+
+    ugroups: 
+        name: family
+      
+    packages:
+      - proftpd
+      - mc
+
+    users:
+      - {"amma":"family" }
+      - {"achan":"family"}

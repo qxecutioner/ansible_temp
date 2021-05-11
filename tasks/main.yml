@@ -1,0 +1,63 @@
+---
+# tasks file for user
+
+    - name: create groups
+      group:
+        name: "{{item['name']}}"
+      loop:
+        - "{{ugroups}}"
+
+    - name: debug
+      debug:
+        var: ansible_facts['group_names']
+        var: group_names
+
+    # example of conditional---------------
+    #   if there is http restart it
+    - name: get ssh status
+      command: systemctl is-active ssh
+      ignore_errors: yes
+      register: result
+
+    - name: restart httpd depending on its active status
+      service:
+        name: ssh
+        state: restarted
+      when: result.rc == 0
+
+    #--------------------------------------
+    - name: install packages
+      apt:
+        name: "{{item}}"
+        state: absent 
+      loop:
+        - "{{packages}}"
+      notify: restart ssh
+
+    - name: user setup
+      user:
+        name: "{{item['uname']}}"
+        state: present
+        create_home: no
+      loop:
+        - "{{username['jithin']}}"
+        - "{{username['athira']}}"
+
+    - name: user setup with_dict
+      user:
+        name: "{{item.key}}"
+        groups: "{{item.value}}"
+        state: present
+        create_home: no
+      with_dict: "{{users}}"
+
+    #------------------------------------------------
+    #Jinja2 temmplating engine
+    #------------------------------
+    - name: deploy motd using jinja2
+      template:
+          src: motd.j2
+          dest: /etc/motd
+          owner: root
+          group: root
+          mode: "0644"
